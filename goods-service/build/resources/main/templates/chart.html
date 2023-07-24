@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+    <title>Line Graph</title>
+    <!-- Optional theme -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
+</head>
+<body>
+<div class="container-fluid bg-light py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <img th:src="${goods.img}" class="img-fluid rounded" alt="Product Image">
+            </div>
+            <div class="col-md-6">
+                <h2 class="mb-3">[[${goods.name}]]</h2>
+                <p>판매가: [[${goods.del_price}]]</p>
+                <p>할인가: [[${goods.price}]]</p>
+                <p>구매 평점: [[${goods.rating}]]</p>
+                <p>평가 수: [[${goods.rating_count}]]</p>
+                <a th:href="${goods.url}" target="_blank" class="btn btn-primary">무신사에서 보기</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Bootstrap JS and jQuery (required for Bootstrap) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-3d.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<div id="container" style="height: 400px"></div>
+
+<script th:inline="javascript">
+    (async () => {
+
+        // musinsa data JSON
+        const data = await fetch(
+            `http://localhost:8080/db/goods/[[${goods.id}]]`
+        ).then(response => response.json());
+
+        // test data JSON
+        // const data = await fetch(
+        //     'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
+        // ).then(response => response.json());
+
+
+
+        Highcharts.chart('container', {
+            chart: {
+                zoomType: 'x'
+            },
+            title: {
+                text: [[ ${goods.name} ]],
+                align: 'left'
+            },
+            subtitle: {
+                text: document.ontouchstart === undefined ?
+                    '확대하고 싶은 구역을 클릭 & 드래그 하세요.' : '확대하고 싶은 구역을 선택하세요.',
+                align: 'left'
+            },
+            xAxis: {
+                type: 'datetime'
+            },
+            yAxis: {
+                title: {
+                    text: '가격'
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                area: {
+                    fillColor: {
+                        linearGradient: {
+                            x1: 0,
+                            y1: 0,
+                            x2: 0,
+                            y2: 1
+                        },
+                        stops: [
+                            [0, Highcharts.getOptions().colors[0]],
+                            [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                        ]
+                    },
+                    marker: {
+                        radius: 2
+                    },
+                    lineWidth: 1,
+                    states: {
+                        hover: {
+                            lineWidth: 1
+                        }
+                    },
+                    threshold: null
+                }
+            },
+
+            series: [{
+                type: 'area',
+                name: '가격',
+                data: data
+            }]
+        });
+    })();
+
+</script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</body>
+</html>
