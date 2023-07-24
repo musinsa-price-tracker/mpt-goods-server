@@ -15,12 +15,13 @@ import java.util.List;
 
 @Controller
 public class ChartController {
-    @Autowired
-    private ChartDao chartDao;
-    @Autowired
-    private GoodsDao goodsDao;
+    private final ChartDao chartDao;
 
-    @GetMapping("/api/goods/{id}")//요상함
+    public ChartController(ChartDao chartDao) {
+        this.chartDao = chartDao;
+    }
+
+    @GetMapping("/api/goods/chart/{id}")
     public ResponseEntity<List<List<Long>>> getChartData(@PathVariable("id") int id) {
         List<Chart> chart = chartDao.getChartData(id);
         List<List<Long>> list = new LinkedList<>();

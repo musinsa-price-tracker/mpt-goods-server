@@ -5,18 +5,17 @@ import java.util.ArrayList;
 
 import com.mpt.goodsservice.config.JdbcUtil;
 import com.mpt.goodsservice.domain.Goods;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class GoodsListDAO {
+public class GoodsListDao {
 
     private final JdbcUtil jdbcUtil;
     private Connection conn;
     private PreparedStatement stmt;
     private ResultSet rs;
 
-    public GoodsListDAO(JdbcUtil jdbcUtil) {
+    public GoodsListDao(JdbcUtil jdbcUtil) {
         this.jdbcUtil = jdbcUtil;
     }
 
