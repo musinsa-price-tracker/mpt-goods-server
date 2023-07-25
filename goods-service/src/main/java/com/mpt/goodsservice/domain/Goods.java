@@ -27,4 +27,18 @@ public class Goods {
         this.img = img;
         this.url = url;
     }
+
+    @Override
+    public String toString() {
+        return "Goods{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", del_price=" + del_price +
+                ", price=" + price +
+                ", rating=" + rating +
+                ", rating_count=" + rating_count +
+                ", img='" + img + '\'' +
+                ", url='" + url + '\'' +
+                '}';
+    }
 }
