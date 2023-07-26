@@ -21,20 +21,23 @@
         }
 
         .product-image {
-            width: 40%;
+            width: 45%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
             object-fit: contain;
             border-radius: 8px;
         }
 
         .product-info h2 {
-            font-size: 28px;
+            font-size: 30px;
             font-weight: bold;
             color: #333;
             margin-bottom: 10px;
         }
 
         .product-info p {
-            font-size: 18px;
+            font-size: 20px;
             color: #777;
             margin-bottom: 5px;
         }
@@ -52,6 +55,7 @@
             margin-top: 100px;
             margin-bottom: 50px;
         }
+
     </style>
 </head>
 <body>
@@ -59,15 +63,15 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6 mb-3">
-                <img th:src="${goods.img}" class="img-fluid rounded product-image" alt="Product Image">
+                <img id="goods_img" class="img-fluid rounded product-image" alt="Product Image">
             </div>
             <div class="col-md-6 product-info">
-                <h2>[[${goods.name}]]</h2>
-                <p>판매가: [[${goods.del_price}]]</p>
-                <p>할인가: [[${goods.price}]]</p>
-                <p class="rating" th:data-rating="${goods.rating}"></p>
-                <p>평가 수: [[${goods.rating_count}]]</p>
-                <a th:href="${goods.url}" target="_blank" class="btn btn-outline-primary link-button">무신사에서 보기</a>
+                <h2 id="goods_name"></h2>
+                <p id="goods_del_price">판매가: </p>
+                <p id="goods_price">할인가: </p>
+                <p class="rating" id="goods_rating"></p>
+                <p id="goods_rating_count">평가 수: </p>
+                <a id="goods_url" target="_blank" class="btn btn-outline-primary btn-lg link-button">무신사에서 보기</a>
             </div>
         </div>
     </div>
@@ -101,21 +105,59 @@
     }
 
     // Get the star ratings elements and update them with the corresponding star icons
-    $(document).ready(function () {
-        $('.rating').each(function () {
-            const rating = parseFloat($(this).data('rating'));
-            $(this).html(generateStarRating(rating));
-        });
-    });
+    // $(document).ready(function () {
+    //     $('.rating').each(function () {
+    //         const rating = parseFloat($(this).data('rating'));
+    //         $(this).html(generateStarRating(rating));
+    //     });
+    // });
 </script>
 
 <script th:inline="javascript">
+    const gid = "1312035";
+    const token = "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJNdXNpbnNhLVByaWNlLVRyYWNrZXIiLCJleHAiOjE2OTAzNDM2NzEsInVzZXJJRCI6IjExMzc5MTQ5OTc0ODI5MDU4MjY4MCIsImlhdCI6MTY5MDM0MDA3MSwiZW1haWwiOiJsZWVqdXN1azIwOEBnbWFpbC5jb20iLCJwbGF0Zm9ybSI6IkdPT0dMRSJ9.rZ0GWCjCvQY2O3COMwxmWeofCiTJofkCr2dwFkUf2xFG4R8-ejnGESDOBd6MCIRygpTEhvJd-XhikYq4oFAftA";
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
     (async () => {
+        const url = "http://mpt-api-server.com/goods/" + gid;
+        const data = await fetch(url).then(response => response.json());
+
+        const goods_name = data['name'];
+        const goods_del_price = data['del_price'];
+        const goods_price = data['price'];
+        const goods_rating = data['rating'];
+        const goods_rating_count = data['rating_count'];
+        const goods_url = data['url'];
+        const goods_img = data['img'];
+
+        const goods_name_elem = document.getElementById("goods_name");
+        goods_name_elem.innerText = goods_name;
+        const goods_del_price_elem = document.getElementById("goods_del_price")
+        goods_del_price_elem.innerHTML += numberWithCommas(goods_del_price);
+        const goods_price_elem = document.getElementById("goods_price");
+        goods_price_elem.innerHTML += numberWithCommas(goods_price);
+        const goods_rating_elem = document.getElementById("goods_rating");
+        goods_rating_elem.innerHTML += generateStarRating(goods_rating);
+        const goods_rating_count_elem = document.getElementById("goods_rating_count");
+        goods_rating_count_elem.innerHTML += goods_rating_count;
+        const goods_img_elem = document.getElementById("goods_img");
+        goods_img_elem.src = "https:" + goods_img;
+        const goods_url_elem = document.getElementById("goods_url");
+        goods_url_elem.href = "https:" + goods_url;
+    })();
+
+    (async () => {
+        const url = "http://mpt-api-server.com/goods/chart/" + gid;
 
         // musinsa data JSON
-        const data = await fetch(
-            `http://localhost:8080/db/goods/[[${goods.id}]]`
-        ).then(response => response.json());
+        const data = await fetch(url, {
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        }).then(response => response.json());
 
         // test data JSON
         // const data = await fetch(
@@ -178,7 +220,7 @@
                 zoomType: 'x'
             },
             title: {
-                text: [[${goods.name}]] ,
+                text: "",
                 align: 'left'
             },
             subtitle: {
