@@ -16,6 +16,7 @@ public class GoodsDao {
     private Connection conn;
     private PreparedStatement psmt;
     private ResultSet rs;
+    private final int PAGE_LIMIT = 40;
 
     public GoodsDao(JdbcUtil jdbcUtil) {
         this.jdbcUtil = jdbcUtil;
@@ -55,20 +56,23 @@ public class GoodsDao {
         try {
             conn = jdbcUtil.getConnection();
 
-            if (param.get("salemode").equals("priceComparison")){ // 정가 대비 할인율 순
-                sql = "select * from goods order by ((del_price - price)/del_price) desc LIMIT ?, 50";
-            } else{
-                sql = "select g.*, price_information.drop_rate goods from goods g left join price_information on g.id = price_information.id order by price_information.drop_rate asc LIMIT ?, 50";
+            if (param.get("saleType").equals("priceComparison")) { // 정가 대비 할인율 순
+                sql = "select * from goods order by ((del_price - price)/del_price) desc LIMIT ?, ?";
+            } else {
+                sql = "select g.* from goods g left join price_information p on g.id = p.id order by p.drop_rate asc LIMIT ?, ?";
             }
 
             int pageNumber = Integer.parseInt(param.get("page"));
-            int offset = (pageNumber-1)*50;
+            int offset = (pageNumber - 1) * PAGE_LIMIT;
 
             psmt = conn.prepareStatement(sql);
             psmt.setInt(1, offset);
+            psmt.setInt(2, PAGE_LIMIT);
+
             rs = psmt.executeQuery();
-            while(rs.next()){
-                goods = new Goods(rs.getInt("id"),
+            while (rs.next()) {
+                goods = new Goods(
+                        rs.getInt("id"),
                         rs.getString("name"),
                         rs.getInt("del_price"),
                         rs.getInt("price"),
@@ -85,5 +89,4 @@ public class GoodsDao {
         }
         return list;
     }
-
 }

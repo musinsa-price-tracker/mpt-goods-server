@@ -31,7 +31,7 @@ public class GoodsController {
     }
 
     @GetMapping("/api/goods")
-    public ResponseEntity<List<GoodsDto>> goodsList(@RequestParam HashMap<String, String> param) {
+    public ResponseEntity<List<GoodsDto>> goodsList(@RequestParam(required = false) HashMap<String, String> param) {
         List<Goods> list = goodsDao.getGoods(param);
         List<GoodsDto> result = new ArrayList<>();
 

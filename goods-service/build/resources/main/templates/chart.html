@@ -2,35 +2,114 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-          crossorigin="anonymous">
-    <title>Line Graph</title>
-    <!-- Optional theme -->
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musinsa Price Tracker - Goods Details</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- CSS Styles -->
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+
+        .container-fluid {
+            padding: 50px 20px 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+        }
+
+        .product-image {
+            width: 45%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .product-info h2 {
+            font-size: 30px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .product-info p {
+            font-size: 20px;
+            color: #777;
+            margin-bottom: 5px;
+        }
+
+        .rating {
+            font-size: 24px;
+            color: #ff9300;
+        }
+
+        .link-button {
+            margin-top: 20px;
+        }
+
+        #container {
+            margin-top: 100px;
+            margin-bottom: 50px;
+        }
+
+    </style>
 </head>
 <body>
-<div class="container-fluid bg-light py-4">
+<div class="container-fluid">
     <div class="container">
         <div class="row">
             <div class="col-md-6 mb-3">
-                <img th:src="${goods.img}" class="img-fluid rounded" alt="Product Image">
+                <img id="goods_img" class="img-fluid rounded product-image" alt="Product Image">
             </div>
-            <div class="col-md-6">
-                <h2 class="mb-3">[[${goods.name}]]</h2>
-                <p>판매가: [[${goods.del_price}]]</p>
-                <p>할인가: [[${goods.price}]]</p>
-                <p>구매 평점: [[${goods.rating}]]</p>
-                <p>평가 수: [[${goods.rating_count}]]</p>
-                <a th:href="${goods.url}" target="_blank" class="btn btn-primary">무신사에서 보기</a>
+            <div class="col-md-6 product-info">
+                <h2 id="goods_name"></h2>
+                <p id="goods_del_price">판매가: </p>
+                <p id="goods_price">할인가: </p>
+                <p class="rating" id="goods_rating"></p>
+                <p id="goods_rating_count">평가 수: </p>
+                <a id="goods_url" target="_blank" class="btn btn-outline-primary btn-lg link-button">무신사에서 보기</a>
+                <a class="btn btn-outline-primary btn-lg link-button" target="_blank" data-toggle="modal" data-target="#exampleModal" data-whatever="@email">가격 알림 받기</a>
+
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">가격 알림 받기</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="goods_price" class="col-form-label">가격:</label>
+                                        <input type="number" min="0" class="form-control" id="priceInput" step="100">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary">받기</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 </div>
 
-<!-- Include Bootstrap JS and jQuery (required for Bootstrap) -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="container"></div>
+        </div>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -38,29 +117,138 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/highcharts-3d.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
-<div id="container" style="height: 400px"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Function to generate star icons based on the numeric rating
+    function generateStarRating(rating) {
+        const ratingScale = rating / 20;
+        const stars = '<i class="fas fa-star" style="color: #ff9300;"></i>'.repeat(Math.floor(ratingScale));
+        const halfStar = ratingScale % 1 >= 0.5 ? '<i class="fas fa-star-half-alt" style="color: #ff9300;"></i>' : '';
+        const emptyStars = '<i class="far fa-star" style="color: #ff9300;"></i>'.repeat(5 - Math.ceil(ratingScale));
+        return stars + halfStar + emptyStars;
+    }
+
+    // Get the star ratings elements and update them with the corresponding star icons
+    // $(document).ready(function () {
+    //     $('.rating').each(function () {
+    //         const rating = parseFloat($(this).data('rating'));
+    //         $(this).html(generateStarRating(rating));
+    //     });
+    // });
+</script>
 
 <script th:inline="javascript">
+    const gid = "1312035";
+    const token = "";
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
     (async () => {
+        const url = "http://mpt-api-server.com/goods/" + gid;
+        const data = await fetch(url).then(response => response.json());
+
+        const goods_name = data['name'];
+        const goods_del_price = data['del_price'];
+        const goods_price = data['price'];
+        const goods_rating = data['rating'];
+        const goods_rating_count = data['rating_count'];
+        const goods_url = data['url'];
+        const goods_img = data['img'];
+
+        const goods_name_elem = document.getElementById("goods_name");
+        goods_name_elem.innerText = goods_name;
+        const goods_del_price_elem = document.getElementById("goods_del_price")
+        goods_del_price_elem.innerHTML += numberWithCommas(goods_del_price) + "원";
+        const goods_price_elem = document.getElementById("goods_price");
+        goods_price_elem.innerHTML += numberWithCommas(goods_price) + "원";
+        const goods_rating_elem = document.getElementById("goods_rating");
+        goods_rating_elem.innerHTML += generateStarRating(goods_rating);
+        const goods_rating_count_elem = document.getElementById("goods_rating_count");
+        goods_rating_count_elem.innerHTML += goods_rating_count + "개";
+        const goods_img_elem = document.getElementById("goods_img");
+        goods_img_elem.src = "https:" + goods_img;
+        const goods_url_elem = document.getElementById("goods_url");
+        goods_url_elem.href = "https:" + goods_url;
+
+        document.getElementById("priceInput").setAttribute("value", goods_price);
+
+    })();
+
+    (async () => {
+        const url = "http://mpt-api-server.com/goods/chart/" + gid;
 
         // musinsa data JSON
-        // const data = await fetch(
-        //     `http://localhost:8080/db/goods/[[${goods.id}]]`
-        // ).then(response => response.json());
+        const data = await fetch(url, {
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        }).then(response => response.json());
 
         // test data JSON
-        const data = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
-        ).then(response => response.json());
+        // const data = await fetch(
+        //     'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
+        // ).then(response => response.json());
 
-
+        Highcharts.setOptions({
+            lang: {
+                thousandsSep: ","
+            }
+            , exporting: {
+                menuItemDefinitions: {
+                    printChart: {
+                        text: "차트 인쇄",
+                        onclick: function () {
+                            this.print();
+                        }
+                    },
+                    downloadPNG: {
+                        text: "다운로드 PNG",
+                        onclick: function () {
+                            this.exportChart();
+                        }
+                    }
+                    , downloadJPEG: {
+                        text: "다운로드 JPG",
+                        onclick: function () {
+                            this.exportChart({
+                                type: 'image/jpeg'
+                            });
+                        }
+                    }
+                    , downloadPDF: {
+                        text: "다운로드 PDF",
+                        onclick: function () {
+                            this.exportChart({
+                                type: 'application/pdf'
+                            });
+                        }
+                    }
+                    , downloadSVG: {
+                        text: "다운로드 SVG",
+                        onclick: function () {
+                            this.exportChart({
+                                type: 'image/svg+xml'
+                            });
+                        }
+                    }
+                },
+                buttons: {
+                    contextButton: {
+                        menuItems: ["printChart", "separator", "downloadPNG", "downloadJPEG", "downloadPDF", "downloadSVG"]
+                    }
+                }
+            }
+        });
 
         Highcharts.chart('container', {
             chart: {
                 zoomType: 'x'
             },
             title: {
-                text: [[ ${goods.name} ]],
+                text: "",
                 align: 'left'
             },
             subtitle: {
@@ -74,9 +262,17 @@
             yAxis: {
                 title: {
                     text: '가격'
+                },
+                labels: {
+                    formatter: function() {
+                        return this.value.toLocaleString();
+                    }
                 }
             },
             legend: {
+                enabled: false
+            },
+            credits: {
                 enabled: false
             },
             plotOptions: {
@@ -105,7 +301,6 @@
                     threshold: null
                 }
             },
-
             series: [{
                 type: 'area',
                 name: '가격',
@@ -113,6 +308,17 @@
             }]
         });
     })();
+
+    const emailBtn = document.getElementById("email_btn");
+
+    emailBtn.addEventListener("click", () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderPage(currentPage, itemsPerPage, data);
+            renderPageNumbers(currentPage, totalPages);
+        }
+    });
+
 
 </script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
