@@ -1,4 +1,4 @@
-package com.mpt.goodsservice.controller;
+package com.mpt.goodsservice.goodsservice.controller;
 
 import com.mpt.goodsservice.common.MptServerInfo;
 import com.mpt.goodsservice.dao.ChartDao;
