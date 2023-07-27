@@ -3,11 +3,9 @@ package com.mpt.goodsservice.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
-@Setter
 public class Goods {
     private int id;
     private String name;
@@ -30,4 +28,17 @@ public class Goods {
         this.url = url;
     }
 
+    @Override
+    public String toString() {
+        return "Goods{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", del_price=" + del_price +
+                ", price=" + price +
+                ", rating=" + rating +
+                ", rating_count=" + rating_count +
+                ", img='" + img + '\'' +
+                ", url='" + url + '\'' +
+                '}';
+    }
 }

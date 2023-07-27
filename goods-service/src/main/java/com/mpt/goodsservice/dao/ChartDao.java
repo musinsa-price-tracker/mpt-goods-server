@@ -1,6 +1,6 @@
 package com.mpt.goodsservice.dao;
 
-import com.mpt.goodsservice.common.JDBCUtil;
+import com.mpt.goodsservice.config.JdbcUtil;
 import com.mpt.goodsservice.domain.Chart;
 import org.springframework.stereotype.Repository;
 
@@ -12,15 +12,20 @@ import java.util.List;
 
 @Repository
 public class ChartDao {
+    private final JdbcUtil jdbcUtil;
     private Connection conn;
     private PreparedStatement stmt;
     private ResultSet rs;
+
+    public ChartDao(JdbcUtil jdbcUtil) {
+        this.jdbcUtil = jdbcUtil;
+    }
 
     public List<Chart> getChartData(int id) {
         Chart chart;
         List<Chart> list = new LinkedList();
 
-        try { conn = JDBCUtil.getConnection();
+        try { conn = jdbcUtil.getConnection();
             String sql = "select * from price_chart where id=?";
             if (conn != null) {
                 stmt = conn.prepareStatement(sql);
@@ -39,7 +44,7 @@ public class ChartDao {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            JDBCUtil.close(rs, stmt, conn);
+            jdbcUtil.close(rs, stmt, conn);
         }
         return list;
     }
