@@ -1,4 +1,4 @@
-package com.mpt.goodsservice.dto;
+package com.mpt.goodsservice.goodsservice.dto;
 
 import com.mpt.goodsservice.domain.Goods;
 import lombok.Getter;

@@ -70,13 +70,16 @@
                 <p class="rating" id="goods_rating"></p>
                 <p id="goods_rating_count">평가 수: </p>
                 <a id="goods_url" target="_blank" class="btn btn-outline-primary btn-lg link-button">무신사에서 보기</a>
-                <a class="btn btn-outline-primary btn-lg link-button" target="_blank" data-toggle="modal" data-target="#exampleModal" data-whatever="@email">가격 알림 받기</a>
+                <a class="btn btn-outline-primary btn-lg link-button" target="_blank" data-toggle="modal"
+                   data-target="#guestModal" data-whatever="@email">가격 알림 받기</a>
 
-                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <!--Modal for Guest-->
+                <div class="modal fade" id="guestModal" tabindex="-1" role="dialog"
+                     aria-labelledby="guestModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">가격 알림 받기</h5>
+                                <h5 class="modal-title" id="guestModalLabel">가격 알림 받기</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -84,8 +87,8 @@
                             <div class="modal-body">
                                 <form>
                                     <div class="form-group">
-                                        <label for="goods_price" class="col-form-label">가격:</label>
-                                        <input type="number" min="0" class="form-control" id="priceInput" step="100">
+                                        <label for="goods_price" class="col-form-label">원하는 가격을 설정하세요.</label>
+                                        <input type="number" min="0" class="form-control" id="guestPriceInput" step="100">
                                     </div>
                                 </form>
                             </div>
@@ -96,6 +99,33 @@
                         </div>
                     </div>
                 </div>
+
+<!--                &lt;!&ndash;Modal for Member&ndash;&gt;-->
+<!--                <div class="modal fade" id="memberModal" tabindex="-1" role="dialog"-->
+<!--                     aria-labelledby="memberModalLabel" aria-hidden="true">-->
+<!--                    <div class="modal-dialog" role="document">-->
+<!--                        <div class="modal-content">-->
+<!--                            <div class="modal-header">-->
+<!--                                <h5 class="modal-title" id="memberModalLabel">가격 알림 받기</h5>-->
+<!--                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--                                    <span aria-hidden="true">&times;</span>-->
+<!--                                </button>-->
+<!--                            </div>-->
+<!--                            <div class="modal-body">-->
+<!--                                <form>-->
+<!--                                    <div class="form-group">-->
+<!--                                        <label for="goods_price" class="col-form-label">수정할 가격을 입력하세요.</label>-->
+<!--                                        <input type="number" min="0" class="form-control" id="memberPriceInput" step="100">-->
+<!--                                    </div>-->
+<!--                                </form>-->
+<!--                            </div>-->
+<!--                            <div class="modal-footer">-->
+<!--                                <button type="button" class="btn btn-primary">받기</button>-->
+<!--                                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
 
             </div>
         </div>
@@ -129,13 +159,6 @@
         return stars + halfStar + emptyStars;
     }
 
-    // Get the star ratings elements and update them with the corresponding star icons
-    // $(document).ready(function () {
-    //     $('.rating').each(function () {
-    //         const rating = parseFloat($(this).data('rating'));
-    //         $(this).html(generateStarRating(rating));
-    //     });
-    // });
 </script>
 
 <script th:inline="javascript">
@@ -145,7 +168,7 @@
     function numberWithCommas(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
-
+x
     (async () => {
         const url = "http://mpt-api-server.com/goods/" + gid;
         const data = await fetch(url).then(response => response.json());
@@ -173,7 +196,7 @@
         const goods_url_elem = document.getElementById("goods_url");
         goods_url_elem.href = "https:" + goods_url;
 
-        document.getElementById("priceInput").setAttribute("value", goods_price);
+        document.getElementById("guestPriceInput").setAttribute("value", goods_price);
 
     })();
 
@@ -264,7 +287,7 @@
                     text: '가격'
                 },
                 labels: {
-                    formatter: function() {
+                    formatter: function () {
                         return this.value.toLocaleString();
                     }
                 }
@@ -308,17 +331,6 @@
             }]
         });
     })();
-
-    const emailBtn = document.getElementById("email_btn");
-
-    emailBtn.addEventListener("click", () => {
-        if (currentPage > 1) {
-            currentPage--;
-            renderPage(currentPage, itemsPerPage, data);
-            renderPageNumbers(currentPage, totalPages);
-        }
-    });
-
 
 </script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>

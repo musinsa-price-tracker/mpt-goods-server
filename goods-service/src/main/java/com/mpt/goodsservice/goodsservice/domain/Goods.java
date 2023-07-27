@@ -1,4 +1,4 @@
-package com.mpt.goodsservice.domain;
+package com.mpt.goodsservice.goodsservice.domain;
 
 import lombok.Builder;
 import lombok.Getter;

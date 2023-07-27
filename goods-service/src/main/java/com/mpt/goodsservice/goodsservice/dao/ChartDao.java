@@ -1,4 +1,4 @@
-package com.mpt.goodsservice.dao;
+package com.mpt.goodsservice.goodsservice.dao;
 
 import com.mpt.goodsservice.common.JDBCUtil;
 import com.mpt.goodsservice.domain.Chart;
