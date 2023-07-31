@@ -58,7 +58,6 @@ public class ChartController {
                 return (ResponseEntity<List<List<Long>>>) ResponseEntity.status(HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception e) {
-            // TODO: handle exception
             return (ResponseEntity<List<List<Long>>>) ResponseEntity.status(HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok().body(list);

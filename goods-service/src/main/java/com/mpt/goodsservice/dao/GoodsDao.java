@@ -55,8 +55,10 @@ public class GoodsDao {
         String sql = null;
         try {
             conn = jdbcUtil.getConnection();
-
-            if (param.get("saleType").equals("priceComparison")) { // 정가 대비 할인율 순
+            if (param.get("page").equals("-1")) {
+                sql = "select * from goods ";
+            }
+            else if (param.get("saleType").equals("priceComparison")) { // 정가 대비 할인율 순
                 sql = "select * from goods order by ((del_price - price)/del_price) desc LIMIT ?, ?";
             } else {
                 sql = "select g.* from goods g left join price_information p on g.id = p.id order by p.drop_rate asc LIMIT ?, ?";
